@@ -62,19 +62,36 @@ var docx = wordApp.Documents.Open(directory2);
 var selection = wordApp.Selection;
 
 
+/*
+ * A function that we can use to find and replace any 
+ *  instance of a word with whatever we desire.
+ */
 void findReplaceText(){
+
+        //This foreach loops allows us to go through every 
+        // key value pair, with the key being the word to replace
+        // and the value being the replacement word.
     foreach (KeyValuePair<string,string> entry in inputData) {
         
+            //We clear the formatting here to prevent any 
+            // unintended issues (not sure what it does).
         selection.Find.ClearFormatting();
-        
         selection.Find.Replacement.ClearFormatting();
         
+            //We set the statement to replace all instances of a word
+            // as a simple replaceAll object.
         object replaceAll = Word.WdReplace.wdReplaceAll;
 
+            //This statement allows us to find every instance of
+            // the entry's Key and replace it with the entry's Value.
         selection.Find.Execute(FindText: entry.Key, ReplaceWith: entry.Value, Replace: replaceAll);
+
+            //Debug statement to make sure that the foreach loop is ran.
         Console.WriteLine("Replaced!");
     }
 
+        //This statement lets us set the date in the document, it's not included in the
+        // for loop because it will not be a part of input data.
     selection.Find.Execute(FindText: "TODAYS_DATE", ReplaceWith: DateTime.Now.ToString("d"));
 }
 
