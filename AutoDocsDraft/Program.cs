@@ -56,10 +56,34 @@ var wordApp = new Word.Application();
 wordApp.Visible = true;
 
     //Adds a new document to the Word application.
-var docx = wordApp.Documents.Open(directory2);
+var docx = wordApp.Documents.Open(directory);
 
     //Creates the selection of the document as a variable.
 var selection = wordApp.Selection;
+
+
+
+
+selection.Find.ClearFormatting();
+
+
+object replaceOne = Word.WdReplace.wdReplaceOne;
+selection.Find.Font.Bold = 1;
+if (selection.Find.Execute(FindText: "",Format: true, ReplaceWith: "you've been un-bolded!", Replace: replaceOne)) {
+    selection.Font.Bold = 0;
+};
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*
@@ -95,7 +119,7 @@ void findReplaceText(){
     selection.Find.Execute(FindText: "TODAYS_DATE", ReplaceWith: DateTime.Now.ToString("d"));
 }
 
-findReplaceText();
+//findReplaceText();
 
 
 
