@@ -15,6 +15,7 @@ using Word = Microsoft.Office.Interop.Word;
 // template documents.
 Dictionary<string, string> inputData = new();
 
+Dictionary<string, List<string>> docPropertiesCC = new();
 
 
 /**
@@ -48,6 +49,7 @@ void TESTINGInitializer()
 //Placeholder directory used, this will be changed later to a permanent address.
 string directory = "C:\\users\\shuff\\documents\\csharpdocs\\CSharpDocTest.docx";
 string directory2 = "C:\\users\\shuff\\documents\\csharpdocs\\Assault.docx";
+string directory3 = "C:\\users\\shuff\\documents\\csharpdocs\\AssaultCC.docx";
 
 //Variable used for the creation of a new Word application so that we can use methods on it.
 var wordApp = new Word.Application();
@@ -57,7 +59,7 @@ var wordApp = new Word.Application();
 wordApp.Visible = true;
 
     //Adds a new document to the Word application.
-var docx = wordApp.Documents.Open(directory);
+var docx = wordApp.Documents.Open(directory3);
 
     //Creates the selection of the document as a variable.
 var selection = wordApp.Selection;
@@ -67,11 +69,17 @@ Word.Range docRange = docx.Content;
 
 
 
+/* LIST EVERY CONTENT CONTROL IN A DICTIONARY WITH
+ *  {CONTENT TITLE, [INDEX, PLACEHOLDER]}
+for(int i = 1; i <= docRange.ContentControls.Count; i++){
+    Word.Range title = docRange.ContentControls[i].Range;
+    docPropertiesCC.Add(title.Text,[$"{i}",$"{title.Text}"]);
+}
 
-
-
-
-
+foreach (KeyValuePair<string, List<string>> entry in docPropertiesCC) { 
+    Console.WriteLine($"{entry.Key}:{entry.Value[0]}, {entry.Value[1]}");
+}
+*/
 
 
 
