@@ -36,7 +36,7 @@ void TESTINGInitializer()
     }
 }
 
-TESTINGInitializer();
+//TESTINGInitializer();
 
 
 
@@ -88,6 +88,13 @@ Word.Range docRange = docx.Content;
 
 
 
+
+
+/* MESSING WITH CONTENT CONTROLS AND ACCESSING THEM
+Console.WriteLine(docRange.ContentControls.Count);
+Word.Range ctrl = docRange.ContentControls[1].Range;
+ctrl.Text = "testimber";
+*/
 
 
 
