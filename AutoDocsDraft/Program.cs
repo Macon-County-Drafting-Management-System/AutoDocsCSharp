@@ -67,39 +67,46 @@ Word.Range docRange = docx.Content;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* LIST EVERY BOLDENED WORD
 docRange.Find.ClearFormatting();
 docRange.Find.Forward = true;
 docRange.Find.Format = true;
 docRange.Find.Font.Bold = 1;
 docRange.Find.Execute(FindText: "");
+
 while(docRange.Find.Found){
-    if(!(docRange.Text.Contains(" "))){
-        Console.WriteLine(docRange.Text);
-    }
+    string boldText = docRange.Text;
+    Console.WriteLine($"-- {boldText.TrimEnd()}");
     docRange.Find.Execute(FindText: "");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*/
 
 
 
@@ -115,13 +122,6 @@ if (selection.Find.Execute(FindText: "", Format: true)){
     selection.Font.Bold = 0;
 }
 */
-
-
-
-
-
-
-
 
 
 
@@ -162,19 +162,6 @@ void findReplaceText(){
 }
 
 //findReplaceText();
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
