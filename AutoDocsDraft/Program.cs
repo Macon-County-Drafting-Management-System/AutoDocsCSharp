@@ -1,6 +1,7 @@
 ﻿using Microsoft.Office.Interop.Access.Dao;
 using Microsoft.Office.Interop.Word;
 using Microsoft.VisualBasic;
+using System.Runtime.CompilerServices;
 using Word = Microsoft.Office.Interop.Word;
 // Imports Word library.
 
@@ -62,16 +63,58 @@ var docx = wordApp.Documents.Open(directory);
 var selection = wordApp.Selection;
 
 
+Word.Range docRange = docx.Content;
 
 
+
+docRange.Find.ClearFormatting();
+docRange.Find.Forward = true;
+docRange.Find.Format = true;
+docRange.Find.Font.Bold = 1;
+docRange.Find.Execute(FindText: "");
+while(docRange.Find.Found){
+    if(!(docRange.Text.Contains(" "))){
+        Console.WriteLine(docRange.Text);
+    }
+    docRange.Find.Execute(FindText: "");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* FIND A BOLD WORD AND UNBOLDEN IT
 selection.Find.ClearFormatting();
-
-
-object replaceOne = Word.WdReplace.wdReplaceOne;
 selection.Find.Font.Bold = 1;
-if (selection.Find.Execute(FindText: "",Format: true, ReplaceWith: "you've been un-bolded!", Replace: replaceOne)) {
+if (selection.Find.Execute(FindText: "", Format: true)){
+    string foundText = selection.Text;
+    Console.WriteLine(foundText);
     selection.Font.Bold = 0;
-};
+}
+*/
 
 
 
@@ -85,8 +128,7 @@ if (selection.Find.Execute(FindText: "",Format: true, ReplaceWith: "you've been 
 
 
 
-
-/*
+/**
  * A function that we can use to find and replace any 
  *  instance of a word with whatever we desire.
  */
