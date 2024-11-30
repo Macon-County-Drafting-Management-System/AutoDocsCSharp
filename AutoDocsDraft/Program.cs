@@ -18,6 +18,7 @@ Dictionary<string, string> inputData = new();
 Dictionary<string, List<string>> docPropertiesCC = new();
 
 
+
 /**
  * Temporary method used for testing.
  */
@@ -69,20 +70,70 @@ Word.Range docRange = docx.Content;
 
 
 
-/* LIST EVERY CONTENT CONTROL IN A DICTIONARY WITH
- *  {CONTENT TITLE, [INDEX, PLACEHOLDER]}
-for(int i = 1; i <= docRange.ContentControls.Count; i++){
-    Word.Range title = docRange.ContentControls[i].Range;
-    docPropertiesCC.Add(title.Text,[$"{i}",$"{title.Text}"]);
+/**
+ * This function reads a template for it's Content Controls
+ *  and sets the name of the content control, it's index, and 
+ *  placeholder value in a dictionary for use later.
+ * 
+ * Dictionary form- {"Content Control Name": ["Content Control Index", "Placeholder Value"]}
+ */
+void readTemplate(){
+
+  
+        //For loop that allows us to iterate through every content
+        // control inside the document.
+    for (int i = 1; i <= docRange.ContentControls.Count; i++){
+            
+            //We set the content control's range as a variable
+            // for easily editing.
+        Word.Range CCselection = docRange.ContentControls[i].Range;
+
+            //Here, we add the text of the selection, it's placeholder value,
+            // as the key for our dictionary, with it's CC index and placeholder
+            // text string as the two entries in the list.
+        docPropertiesCC.Add(CCselection.Text, [$"{i}", $"Placeholder {i}"]);
+    }
+
+    /* DEBUG FUNCTION
+        //This foreach loop lists out every key and their values
+        // for us. 
+    foreach (KeyValuePair<string, List<string>> entry in docPropertiesCC){
+        Console.WriteLine($"{entry.Key}:{entry.Value[0]}, {entry.Value[1]}");
+    }
+    */
 }
 
-foreach (KeyValuePair<string, List<string>> entry in docPropertiesCC) { 
-    Console.WriteLine($"{entry.Key}:{entry.Value[0]}, {entry.Value[1]}");
+readTemplate();
+
+
+
+/**
+ * This function allows us to populate a word document based off of our 
+ *  list of content controls, and what text should replace it.
+ */
+void populateDocument(){
+
+
+        //This foreach loop allows us to go through our entire list of input data 
+        // and populate the document based off of our scheme used.
+    foreach(KeyValuePair<string,List<string>> entry in docPropertiesCC){
+
+            //This if statement singles out the entry containing Today's Date, since that 
+            // is a special value that changes each day and thus has it's own variable.
+            //It could change though.
+        if (entry.Key.Contains("Today")){
+
+                //Sets the Today's Date content control as today's date.
+            docRange.ContentControls[int.Parse(entry.Value[0])].Range.Text = DateTime.Now.ToString("d");
+        }else{
+
+                //Sets the corresponding content control to it's new value.
+            docRange.ContentControls[int.Parse(entry.Value[0])].Range.Text = entry.Value[1];
+        }   
+    }
 }
-*/
 
-
-
+populateDocument();
 
 
 
