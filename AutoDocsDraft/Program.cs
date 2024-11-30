@@ -5,11 +5,7 @@ using System.Runtime.CompilerServices;
 using Word = Microsoft.Office.Interop.Word;
 // Imports Word library.
 
-/*
- * The idea is to be able to input a list
- * containing each color, what should go where that color is,
- * and the document that should be edited.
- */
+
 
 //Potential way store and read data used in the creation of 
 // template documents.
@@ -46,13 +42,13 @@ void TESTINGInitializer()
 
 
 
-//C:\Users\shuff\source\repos\AutoDocsCSharp\AutoDocsDraft\bin\Debug\net8.0\testdocuments\CSharpDocTest.docx
-//Placeholder directory used, this will be changed later to a permanent address.
+    //C:\Users\shuff\source\repos\AutoDocsCSharp\AutoDocsDraft\bin\Debug\net8.0\testdocuments\CSharpDocTest.docx
+    //Placeholder directories used, this will be changed later to a permanent address.
 string directory = "C:\\users\\shuff\\documents\\csharpdocs\\CSharpDocTest.docx";
 string directory2 = "C:\\users\\shuff\\documents\\csharpdocs\\Assault.docx";
 string directory3 = "C:\\users\\shuff\\documents\\csharpdocs\\AssaultCC.docx";
 
-//Variable used for the creation of a new Word application so that we can use methods on it.
+    //Variable used for the creation of a new Word application so that we can use methods on it.
 var wordApp = new Word.Application();
 
     //Shows the document when editing for debugging purposes, will be False later.
@@ -65,7 +61,8 @@ var docx = wordApp.Documents.Open(directory3);
     //Creates the selection of the document as a variable.
 var selection = wordApp.Selection;
 
-
+    //Creates the document range as a variable so that
+    // calling is made quicker.
 Word.Range docRange = docx.Content;
 
 
@@ -82,7 +79,7 @@ void readTemplate(){
   
         //For loop that allows us to iterate through every content
         // control inside the document.
-    for (int i = 1; i <= docRange.ContentControls.Count; i++){
+    for(int i = 1; i <= docRange.ContentControls.Count; i++){
             
             //We set the content control's range as a variable
             // for easily editing.
