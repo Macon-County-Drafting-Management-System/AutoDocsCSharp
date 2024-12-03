@@ -4,10 +4,18 @@ using Microsoft.VisualBasic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Word = Microsoft.Office.Interop.Word;
+using System.Text.Json;
 // Imports Word library.
 
 namespace AutoDocsDraft {
-    
+
+    public class DocumentProperties{
+        Dictionary<string, string> propertiesList { get; set; } = new();
+    }
+
+
+
+
     public class Program{
 
 
@@ -55,12 +63,13 @@ namespace AutoDocsDraft {
             string directory3 = "C:\\users\\shuff\\documents\\csharpdocs\\AssaultCC.docx";
 
             //Variable used for the creation of a new Word application so that we can use methods on it.
-            var wordApp = new Word.Application();
+            Word.Application wordApp = new() {
+                //Shows the document when editing for debugging purposes, will be False later.
+                // be sure to add .close if set to false.
+                Visible = true
+            };
 
-            //Shows the document when editing for debugging purposes, will be False later.
-            // be sure to add .close if set to false.
-            wordApp.Visible = true;
-
+            
             //Adds a new document to the Word application.
             var docx = wordApp.Documents.Open(directory3);
 
