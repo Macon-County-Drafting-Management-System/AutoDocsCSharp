@@ -5,79 +5,55 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using Word = Microsoft.Office.Interop.Word;
 using System.Text.Json;
+using System;
+using System.IO;
+using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 // Imports Word library.
 
 namespace AutoDocsDraft {
 
     public class DocumentProperties{
-        Dictionary<string, string> propertiesList { get; set; } = new();
+        public Dictionary<string, string>? PropertiesList { get; set; } = [];
     }
-
-
 
 
     public class Program{
 
 
+        
+
+
         public static void Main() {
 
 
-            //Potential way store and read data used in the creation of 
-            // template documents.
-            Dictionary<string, string> inputData = new();
-
-            Dictionary<string, List<string>> docPropertiesCC = new();
+                //Potential way store and read data used in the creation of 
+                // template documents.
+            Dictionary<string, List<string>>? docPropertiesCC = [];
 
 
-
-            /**
-             * Temporary method used for testing.
-             */
-            void TESTINGInitializer() {
-                //Input how the data may be stored.
-                inputData.Add("DEFENDANT_NAME", "John Doe");
-                inputData.Add("DOB", "11/24/1995");
-                inputData.Add("COUNT_NUMBER", "1");
-                inputData.Add("OFFENSE_DATE", "3/8/2024");
-                inputData.Add("CONDUCT", "Bad");
-                inputData.Add("VICTIM", "Ronald Roe");
-
-                //Print out the data stored in the dictionary.
-                foreach (KeyValuePair<string, string> entry in inputData) {
-                    Console.WriteLine($"{entry.Key}: {entry.Value}");
-                }
-            }
-
-            //TESTINGInitializer();
-
-
-
-
-
-
-
-            //C:\Users\shuff\source\repos\AutoDocsCSharp\AutoDocsDraft\bin\Debug\net8.0\testdocuments\CSharpDocTest.docx
-            //Placeholder directories used, this will be changed later to a permanent address.
+                //C:\Users\shuff\source\repos\AutoDocsCSharp\AutoDocsDraft\bin\Debug\net8.0\testdocuments\CSharpDocTest.docx
+                //Placeholder directories used, this will be changed later to a permanent address.
             string directory = "C:\\users\\shuff\\documents\\csharpdocs\\CSharpDocTest.docx";
             string directory2 = "C:\\users\\shuff\\documents\\csharpdocs\\Assault.docx";
             string directory3 = "C:\\users\\shuff\\documents\\csharpdocs\\AssaultCC.docx";
 
-            //Variable used for the creation of a new Word application so that we can use methods on it.
+                //Variable used for the creation of a new Word application so that we can use methods on it.
             Word.Application wordApp = new() {
-                //Shows the document when editing for debugging purposes, will be False later.
-                // be sure to add .close if set to false.
+                    //Shows the document when editing for debugging purposes, will be False later.
+                    // be sure to add .close if set to false.
                 Visible = true
             };
 
             
-            //Adds a new document to the Word application.
+             //Adds a new document to the Word application.
             var docx = wordApp.Documents.Open(directory3);
 
-            //Creates the selection of the document as a variable.
+                //Creates the selection of the document as a variable.
             var selection = wordApp.Selection;
 
-            //Creates the document range as a variable so that
-            // calling is made quicker.
+                //Creates the document range as a variable so that
+                // calling is made quicker.
             Word.Range docRange = docx.Content;
 
 
@@ -115,7 +91,7 @@ namespace AutoDocsDraft {
                 */
             }
 
-            readTemplate();
+            //readTemplate();
 
 
 
@@ -126,26 +102,71 @@ namespace AutoDocsDraft {
             void populateDocument() {
 
 
-                //This foreach loop allows us to go through our entire list of input data 
-                // and populate the document based off of our scheme used.
+                    //This foreach loop allows us to go through our entire list of input data 
+                    // and populate the document based off of our scheme used.
                 foreach (KeyValuePair<string, List<string>> entry in docPropertiesCC) {
 
-                    //This if statement singles out the entry containing Today's Date, since that 
-                    // is a special value that changes each day and thus has it's own variable.
-                    //It could change though.
+                        //This if statement singles out the entry containing Today's Date, since that 
+                        // is a special value that changes each day and thus has it's own variable.
+                        //It could change though.
                     if (entry.Key.Contains("Today")) {
 
-                        //Sets the Today's Date content control as today's date.
+                            //Sets the Today's Date content control as today's date.
                         docRange.ContentControls[int.Parse(entry.Value[0])].Range.Text = DateTime.Now.ToString("d");
                     } else {
 
-                        //Sets the corresponding content control to it's new value.
+                            //Sets the corresponding content control to it's new value.
                         docRange.ContentControls[int.Parse(entry.Value[0])].Range.Text = entry.Value[1];
                     }
                 }
             }
 
-            populateDocument();
+            //populateDocument();
+
+
+
+            /**
+             * This method will read a json file and serialize the data for us 
+             * into a usable class with a dictionary.
+             */
+            void readJSON(bool readFile) {
+
+                if (readFile) {
+                    try {
+                        string jsonFilePath = "C:\\users\\shuff\\OneDrive\\Documents\\jsonTest.json";
+
+                        using (StreamReader sr = new StreamReader(jsonFilePath)) {
+                            DocumentProperties? docProp = JsonSerializer.Deserialize<DocumentProperties>(sr.ReadToEnd);
+                        }
+                    } catch (Exception e) {
+                        Console.WriteLine($"Oops!:\n{e.ToString()}");
+                    }
+                    
+                } else {
+
+                    string jsonString = 
+                        """      
+                        {
+                          "PropertiesList": {
+                            "Defendant": "John Doe",
+                            "DOB": "12/5/2004",
+                            "Count Number": "8",
+                            "Offense Date": "12/7/2024",
+                            "Conduct": "No good",
+                            "Victim": "Ronald Roe"
+                          }
+                        }
+                        """;
+                    
+                    DocumentProperties? docProp = JsonSerializer.Deserialize<DocumentProperties>(jsonString);
+                }
+            }
+
+            readJSON(readFile: true);
+
+
+            wordApp.Quit();
+        }
 
 
 
@@ -156,8 +177,37 @@ namespace AutoDocsDraft {
 
 
 
+        /**
+         * These are methods that I am keeping as a reference but 
+         *  not currently using to achieve the endgoal of drafting 
+         *  a document.
+         */
+        public static void OverflowMethodologies() {
 
 
+            Dictionary<string, string>? inputData = [];
+
+
+
+            /**
+             * Temporary method used for testing.
+             */
+            void TESTINGInitializer() {
+                //Input how the data may be stored.
+                inputData.Add("DEFENDANT_NAME", "John Doe");
+                inputData.Add("DOB", "11/24/1995");
+                inputData.Add("COUNT_NUMBER", "1");
+                inputData.Add("OFFENSE_DATE", "3/8/2024");
+                inputData.Add("CONDUCT", "Bad");
+                inputData.Add("VICTIM", "Ronald Roe");
+
+                //Print out the data stored in the dictionary.
+                foreach (KeyValuePair<string, string> entry in inputData) {
+                    Console.WriteLine($"{entry.Key}: {entry.Value}");
+                }
+            }
+
+            //TESTINGInitializer();
 
 
 
@@ -293,6 +343,7 @@ namespace AutoDocsDraft {
                 //Saves the document at a specified directory.
             docx.SaveAs(directory);
             */
+
 
 
         }
