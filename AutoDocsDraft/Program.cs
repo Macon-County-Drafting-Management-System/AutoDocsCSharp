@@ -5,10 +5,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using Word = Microsoft.Office.Interop.Word;
 using System.Text.Json;
-using System;
-using System.IO;
-using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
 // Imports Word library.
 
 namespace AutoDocsDraft {
@@ -22,14 +18,15 @@ namespace AutoDocsDraft {
 
 
         
-
-
         public static void Main() {
 
 
                 //Potential way store and read data used in the creation of 
                 // template documents.
             Dictionary<string, List<string>>? docPropertiesCC = [];
+
+            
+
 
 
                 //C:\Users\shuff\source\repos\AutoDocsCSharp\AutoDocsDraft\bin\Debug\net8.0\testdocuments\CSharpDocTest.docx
@@ -91,9 +88,6 @@ namespace AutoDocsDraft {
                 */
             }
 
-            //readTemplate();
-
-
 
             /**
              * This function allows us to populate a word document based off of our 
@@ -121,7 +115,6 @@ namespace AutoDocsDraft {
                 }
             }
 
-            //populateDocument();
 
 
 
@@ -129,18 +122,32 @@ namespace AutoDocsDraft {
              * This method will read a json file and serialize the data for us 
              * into a usable class with a dictionary.
              */
-            void readJSON(bool readFile) {
+            void readJSON(bool readFile = true, bool updateCCProperties = true) {
 
                 if (readFile) {
                     try {
                         string jsonFilePath = "C:\\users\\shuff\\OneDrive\\Documents\\jsonTest.json";
 
-                        using (StreamReader sr = new StreamReader(jsonFilePath)) {
-                            DocumentProperties? docProp = JsonSerializer.Deserialize<DocumentProperties>(sr.ReadToEnd);
+
+                        using StreamReader sr = new StreamReader(jsonFilePath);
+                        string jsonString = sr.ReadToEnd();
+                        DocumentProperties docProp = JsonSerializer.Deserialize<DocumentProperties>(jsonString);
+                        Console.WriteLine(docProp.PropertiesList.Count());
+
+
+                        foreach (KeyValuePair<string,string> property in docProp.PropertiesList) {
+                            if (docPropertiesCC.ContainsKey(property.Key)) {
+                                docPropertiesCC[property.Key].Insert(1, property.Value);
+                            }
                         }
+
+
+
+
                     } catch (Exception e) {
                         Console.WriteLine($"Oops!:\n{e.ToString()}");
                     }
+
                     
                 } else {
 
@@ -159,22 +166,37 @@ namespace AutoDocsDraft {
                         """;
                     
                     DocumentProperties? docProp = JsonSerializer.Deserialize<DocumentProperties>(jsonString);
+                    
                 }
+
+
+
+
             }
 
-            readJSON(readFile: true);
 
 
-            wordApp.Quit();
+
+
+            readTemplate();
+            readJSON();
+            populateDocument();
+
+
+
+
+
+
+
+
+
+
+
+
+            //wordApp.Quit();
         }
 
-
-
-
-
-
-
-
+        
 
 
         /**
@@ -182,9 +204,9 @@ namespace AutoDocsDraft {
          *  not currently using to achieve the endgoal of drafting 
          *  a document.
          */
-        public static void OverflowMethodologies() {
+        void OverflowMethodologies() {
 
-
+            
             Dictionary<string, string>? inputData = [];
 
 
@@ -255,11 +277,8 @@ namespace AutoDocsDraft {
 
 
 
-
-            /**
-             * A function that we can use to find and replace any 
-             *  instance of a word with whatever we desire.
-             */
+            /*
+            
             void findReplaceText() {
 
                 //This foreach loops allows us to go through every 
@@ -295,8 +314,8 @@ namespace AutoDocsDraft {
 
 
 
-
-            /* PRINTS OUT EVERY COLOR AVAILABLE
+            /*
+            PRINTS OUT EVERY COLOR AVAILABLE
 
             for (int colRange = 1; colRange < 19; colRange++)
             {
@@ -305,11 +324,11 @@ namespace AutoDocsDraft {
                 selection.TypeText($"{selection.Font.Color}\n");
             }
 
-            */
+            
 
 
 
-            /* CODE USED TO FIND A STRING AND REPLACE IT IN BOLD "you've been found"
+             CODE USED TO FIND A STRING AND REPLACE IT IN BOLD "you've been found"
             object findText = "replace me!";
             selection.Find.ClearFormatting();
             selection.Font.Name = "Verdana";
@@ -332,20 +351,17 @@ namespace AutoDocsDraft {
 
 
 
-            */
-
-
-
-            /*
+            
                 //Writes given text into the document.
             selection.TypeText("Hello to all!");
 
                 //Saves the document at a specified directory.
             docx.SaveAs(directory);
+            
+
+
             */
-
-
-
         }
     }
+    
 }
