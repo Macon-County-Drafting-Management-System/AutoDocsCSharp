@@ -10,6 +10,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace AutoDocsDraft {
 
+        //Json class used for drafting of documents.
     public class DocumentProperties{
         public Dictionary<string, string>? PropertiesList { get; set; } = [];
     }
@@ -61,36 +62,34 @@ namespace AutoDocsDraft {
         public static void Main() {
 
 
-            //Potential way store and read data used in the creation of 
-            // template documents.
+                //Potential way store and read data used in the creation of 
+                // template documents.
             Dictionary<string, List<string>>? docPropertiesCC = [];
 
 
-
-
-
-            //C:\Users\shuff\source\repos\AutoDocsCSharp\AutoDocsDraft\bin\Debug\net8.0\testdocuments\CSharpDocTest.docx
-            //Placeholder directories used, this will be changed later to a permanent address.
+                //C:\Users\shuff\source\repos\AutoDocsCSharp\AutoDocsDraft\bin\Debug\net8.0\testdocuments\CSharpDocTest.docx
+                //Placeholder directories used, this will be changed later to a permanent address.
             string directory = "C:\\users\\shuff\\documents\\csharpdocs\\CSharpDocTest.docx";
             string directory2 = "C:\\users\\shuff\\documents\\csharpdocs\\Assault.docx";
             string directory3 = "C:\\users\\shuff\\documents\\csharpdocs\\AssaultCC.docx";
 
-            //Variable used for the creation of a new Word application so that we can use methods on it.
+
+                //Variable used for the creation of a new Word application so that we can use methods on it.
             Word.Application wordApp = new() {
-                //Shows the document when editing for debugging purposes, will be False later.
-                // be sure to add .close if set to false.
+                    //Shows the document when editing for debugging purposes, will be False later.
+                    // be sure to add .close if set to false.
                 Visible = true
             };
 
 
-            //Adds a new document to the Word application.
+                //Adds a new document to the Word application.
             var docx = wordApp.Documents.Open(directory3);
 
-            //Creates the selection of the document as a variable.
+                //Creates the selection of the document as a variable.
             var selection = wordApp.Selection;
 
-            //Creates the document range as a variable so that
-            // calling is made quicker.
+                //Creates the document range as a variable so that
+                // calling is made quicker.
             Word.Range docRange = docx.Content;
 
 
@@ -105,17 +104,17 @@ namespace AutoDocsDraft {
             void readTemplate() {
 
 
-                //For loop that allows us to iterate through every content
-                // control inside the document.
+                    //For loop that allows us to iterate through every content
+                    // control inside the document.
                 for (int i = 1; i <= docRange.ContentControls.Count; i++) {
 
-                    //We set the content control's range as a variable
-                    // for easily editing.
+                        //We set the content control's range as a variable
+                        // for easily editing.
                     Word.Range CCselection = docRange.ContentControls[i].Range;
 
-                    //Here, we add the text of the selection, it's placeholder value,
-                    // as the key for our dictionary, with it's CC index and placeholder
-                    // text string as the two entries in the list.
+                        //Here, we add the text of the selection, it's placeholder value,
+                        // as the key for our dictionary, with it's CC index and placeholder
+                        // text string as the two entries in the list.
                     docPropertiesCC.Add(CCselection.Text, [$"{i}", $"Placeholder {i}"]);
                 }
 
@@ -129,6 +128,7 @@ namespace AutoDocsDraft {
             }
 
 
+
             /**
              * This function allows us to populate a word document based off of our 
              *  list of content controls, and what text should replace it.
@@ -136,20 +136,20 @@ namespace AutoDocsDraft {
             void populateDocument() {
 
 
-                //This foreach loop allows us to go through our entire list of input data 
-                // and populate the document based off of our scheme used.
+                    //This foreach loop allows us to go through our entire list of input data 
+                    // and populate the document based off of our scheme used.
                 foreach (KeyValuePair<string, List<string>> entry in docPropertiesCC) {
 
-                    //This if statement singles out the entry containing Today's Date, since that 
-                    // is a special value that changes each day and thus has it's own variable.
-                    //It could change though.
+                        //This if statement singles out the entry containing Today's Date, since that 
+                        // is a special value that changes each day and thus has it's own variable.
+                        //It could change though.
                     if (entry.Key.Contains("Today")) {
 
-                        //Sets the Today's Date content control as today's date.
+                            //Sets the Today's Date content control as today's date.
                         docRange.ContentControls[int.Parse(entry.Value[0])].Range.Text = DateTime.Now.ToString("d");
                     } else {
 
-                        //Sets the corresponding content control to it's new value.
+                            //Sets the corresponding content control to it's new value.
                         docRange.ContentControls[int.Parse(entry.Value[0])].Range.Text = entry.Value[1];
                     }
                 }
@@ -232,16 +232,16 @@ namespace AutoDocsDraft {
                         //Deserializes the json string into a global class.
                     DocumentProperties? docProp = JsonSerializer.Deserialize<DocumentProperties>(jsonString);
 
-                    //If block to determine whether we want to update the content control
-                    // properties used for drafting the document.
+                        //If block to determine whether we want to update the content control
+                        // properties used for drafting the document.
                     if (updateCCProperties) {
 
-                        //This foreach loop allows us to go through every entry
-                        // and overwrite the placeholder property in the global class.
+                            //This foreach loop allows us to go through every entry
+                            // and overwrite the placeholder property in the global class.
                         foreach (KeyValuePair<string, string> property in docProp.PropertiesList) {
 
-                            //This if statement only overwrites a property if the key is found in 
-                            // the global class.
+                                //This if statement only overwrites a property if the key is found in 
+                                // the global class.
                             if (docPropertiesCC.ContainsKey(property.Key)) {
                                 docPropertiesCC[property.Key].Insert(1, property.Value);
                             }
@@ -249,6 +249,7 @@ namespace AutoDocsDraft {
                     }
                 }
             }
+
 
 
             /** This method allows us to watch a specified folder for any changes,
@@ -295,6 +296,7 @@ namespace AutoDocsDraft {
             }
 
 
+
                 //This is the calling of the methods that are used
                 // for the program.
             readJsonComplex();
@@ -308,6 +310,7 @@ namespace AutoDocsDraft {
         }
 
         
+
 
 
         /**
