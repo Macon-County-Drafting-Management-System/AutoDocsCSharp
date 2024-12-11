@@ -6,17 +6,18 @@ using System.Runtime.CompilerServices;
 using Word = Microsoft.Office.Interop.Word;
 using System.Text.Json;
 using System.Security.Cryptography.X509Certificates;
+using System.Runtime.InteropServices;
 //Imports Word Office library along with Json serialization techniques.
 
 namespace AutoDocsDraft {
 
-        //Json class used for drafting of documents.
-    public class DocumentProperties{
+    //Json class used for drafting of documents.
+    public class DocumentProperties {
         public Dictionary<string, string>? PropertiesList { get; set; } = [];
     }
 
 
-    public class Program{
+    public class Program {
 
         public static string? JsonFilePath { get; set; }
 
@@ -62,34 +63,34 @@ namespace AutoDocsDraft {
         public static void Main() {
 
 
-                //Potential way store and read data used in the creation of 
-                // template documents.
+            //Potential way store and read data used in the creation of 
+            // template documents.
             Dictionary<string, List<string>>? docPropertiesCC = [];
 
 
-                //C:\Users\shuff\source\repos\AutoDocsCSharp\AutoDocsDraft\bin\Debug\net8.0\testdocuments\CSharpDocTest.docx
-                //Placeholder directories used, this will be changed later to a permanent address.
-            string directory = "C:\\users\\shuff\\documents\\csharpdocs\\CSharpDocTest.docx";
-            string directory2 = "C:\\users\\shuff\\documents\\csharpdocs\\Assault.docx";
-            string directory3 = "C:\\users\\shuff\\documents\\csharpdocs\\AssaultCC.docx";
+            //C:\Users\shuff\source\repos\AutoDocsCSharp\AutoDocsDraft\bin\Debug\net8.0\testdocuments\CSharpDocTest.docx
+            //Placeholder directories used, this will be changed later to a permanent address.
+            string directory = Environment.CurrentDirectory + "\\Data\\csharpdocs\\CSharpDocTest.docx";
+            string directory2 = Environment.CurrentDirectory + "\\Data\\csharpdocs\\Assault.docx";
+            string directory3 = Environment.CurrentDirectory + "\\Data\\csharpdocs\\AssaultCC.docx";
+            string? jsonPath = Environment.CurrentDirectory + "\\Data\\csharpdocs\\";
 
-
-                //Variable used for the creation of a new Word application so that we can use methods on it.
+            //Variable used for the creation of a new Word application so that we can use methods on it.
             Word.Application wordApp = new() {
-                    //Shows the document when editing for debugging purposes, will be False later.
-                    // be sure to add .close if set to false.
+                //Shows the document when editing for debugging purposes, will be False later.
+                // be sure to add .close if set to false.
                 Visible = true
             };
 
 
-                //Adds a new document to the Word application.
+            //Adds a new document to the Word application.
             var docx = wordApp.Documents.Open(directory3);
 
-                //Creates the selection of the document as a variable.
+            //Creates the selection of the document as a variable.
             var selection = wordApp.Selection;
 
-                //Creates the document range as a variable so that
-                // calling is made quicker.
+            //Creates the document range as a variable so that
+            // calling is made quicker.
             Word.Range docRange = docx.Content;
 
 
@@ -104,17 +105,17 @@ namespace AutoDocsDraft {
             void readTemplate() {
 
 
-                    //For loop that allows us to iterate through every content
-                    // control inside the document.
+                //For loop that allows us to iterate through every content
+                // control inside the document.
                 for (int i = 1; i <= docRange.ContentControls.Count; i++) {
 
-                        //We set the content control's range as a variable
-                        // for easily editing.
+                    //We set the content control's range as a variable
+                    // for easily editing.
                     Word.Range CCselection = docRange.ContentControls[i].Range;
 
-                        //Here, we add the text of the selection, it's placeholder value,
-                        // as the key for our dictionary, with it's CC index and placeholder
-                        // text string as the two entries in the list.
+                    //Here, we add the text of the selection, it's placeholder value,
+                    // as the key for our dictionary, with it's CC index and placeholder
+                    // text string as the two entries in the list.
                     docPropertiesCC.Add(CCselection.Text, [$"{i}", $"Placeholder {i}"]);
                 }
 
@@ -136,20 +137,20 @@ namespace AutoDocsDraft {
             void populateDocument() {
 
 
-                    //This foreach loop allows us to go through our entire list of input data 
-                    // and populate the document based off of our scheme used.
+                //This foreach loop allows us to go through our entire list of input data 
+                // and populate the document based off of our scheme used.
                 foreach (KeyValuePair<string, List<string>> entry in docPropertiesCC) {
 
-                        //This if statement singles out the entry containing Today's Date, since that 
-                        // is a special value that changes each day and thus has it's own variable.
-                        //It could change though.
+                    //This if statement singles out the entry containing Today's Date, since that 
+                    // is a special value that changes each day and thus has it's own variable.
+                    //It could change though.
                     if (entry.Key.Contains("Today")) {
 
-                            //Sets the Today's Date content control as today's date.
+                        //Sets the Today's Date content control as today's date.
                         docRange.ContentControls[int.Parse(entry.Value[0])].Range.Text = DateTime.Now.ToString("d");
                     } else {
 
-                            //Sets the corresponding content control to it's new value.
+                        //Sets the corresponding content control to it's new value.
                         docRange.ContentControls[int.Parse(entry.Value[0])].Range.Text = entry.Value[1];
                     }
                 }
@@ -170,36 +171,36 @@ namespace AutoDocsDraft {
              */
             void readJsonSimple(bool readFile = true
                 , bool updateCCProperties = true
-                , string jsonFilePath = "C:\\users\\shuff\\OneDrive\\Documents\\jsonTest.json"
+                , string jsonFilePath = ""
                 ) {
 
-                    //If statement to determine whether a file should
-                    // be read or to use a premade json string.
+                //If statement to determine whether a file should
+                // be read or to use a premade json string.
                 if (readFile) {
 
-                        //This try-catch block allows us to handle any errors such as the file not being found.
+                    //This try-catch block allows us to handle any errors such as the file not being found.
                     try {
 
-                            //We use a streamreader here to read the given file from it's destination.
+                        //We use a streamreader here to read the given file from it's destination.
                         using StreamReader sr = new StreamReader(jsonFilePath);
 
-                            //From the file we read every part of it and create a string from it.
+                        //From the file we read every part of it and create a string from it.
                         string jsonString = sr.ReadToEnd();
 
-                            //We then deserialize the string into a usable class
-                            // for drafting later.
+                        //We then deserialize the string into a usable class
+                        // for drafting later.
                         DocumentProperties docProp = JsonSerializer.Deserialize<DocumentProperties>(jsonString);
 
-                            //If block to determine whether we want to update the content control
-                            // properties used for drafting the document.
+                        //If block to determine whether we want to update the content control
+                        // properties used for drafting the document.
                         if (updateCCProperties) {
 
-                                //This foreach loop allows us to go through every entry
-                                // and overwrite the placeholder property in the global class.
+                            //This foreach loop allows us to go through every entry
+                            // and overwrite the placeholder property in the global class.
                             foreach (KeyValuePair<string, string> property in docProp.PropertiesList) {
 
-                                    //This if statement only overwrites a property if the key is found in 
-                                    // the global class.
+                                //This if statement only overwrites a property if the key is found in 
+                                // the global class.
                                 if (docPropertiesCC.ContainsKey(property.Key)) {
                                     docPropertiesCC[property.Key].Insert(1, property.Value);
                                 }
@@ -213,8 +214,8 @@ namespace AutoDocsDraft {
 
                 } else {
 
-                        //This is the predetermined json string that is used
-                        // for debugging. This may be removed later.
+                    //This is the predetermined json string that is used
+                    // for debugging. This may be removed later.
                     string jsonString =
                         """      
                         {
@@ -229,19 +230,19 @@ namespace AutoDocsDraft {
                         }
                         """;
 
-                        //Deserializes the json string into a global class.
+                    //Deserializes the json string into a global class.
                     DocumentProperties? docProp = JsonSerializer.Deserialize<DocumentProperties>(jsonString);
 
-                        //If block to determine whether we want to update the content control
-                        // properties used for drafting the document.
+                    //If block to determine whether we want to update the content control
+                    // properties used for drafting the document.
                     if (updateCCProperties) {
 
-                            //This foreach loop allows us to go through every entry
-                            // and overwrite the placeholder property in the global class.
+                        //This foreach loop allows us to go through every entry
+                        // and overwrite the placeholder property in the global class.
                         foreach (KeyValuePair<string, string> property in docProp.PropertiesList) {
 
-                                //This if statement only overwrites a property if the key is found in 
-                                // the global class.
+                            //This if statement only overwrites a property if the key is found in 
+                            // the global class.
                             if (docPropertiesCC.ContainsKey(property.Key)) {
                                 docPropertiesCC[property.Key].Insert(1, property.Value);
                             }
@@ -258,13 +259,15 @@ namespace AutoDocsDraft {
              */
             void readJsonComplex() {
 
-                    //These two folder variables are our placeholders that 
-                    // will be alternated between depending on the need
+                //These two folder variables are our placeholders that 
+                // will be alternated between depending on the need.
+                //
+                //Use your own folders as necessary.
                 string folder = "C:\\Users\\shuff\\Documents\\jsonComplexTest";
                 string folder2 = "C:\\Users\\shuff\\Downloads";
 
-                    //We initialize a new file system watcher with specified filters
-                    // so that we can know when a new file is updated/placed into a folder.
+                //We initialize a new file system watcher with specified filters
+                // so that we can know when a new file is updated/placed into a folder.
                 using var watcher = new FileSystemWatcher(folder2);
                 watcher.NotifyFilter = NotifyFilters.Attributes
                                  | NotifyFilters.CreationTime
@@ -275,30 +278,30 @@ namespace AutoDocsDraft {
                                  | NotifyFilters.Security
                                  | NotifyFilters.Size;
 
-                    //We then use global static methods for determining
-                    // when a file has had an operation done on it.
+                //We then use global static methods for determining
+                // when a file has had an operation done on it.
                 watcher.Changed += OnChanged;
                 watcher.Created += OnCreated;
                 watcher.Deleted += OnDeleted;
                 watcher.Renamed += OnRenamed;
                 watcher.Error += OnError;
 
-                    //We filter for only .json files specifically
-                    // since that is what our program is looking for,
+                //We filter for only .json files specifically
+                // since that is what our program is looking for,
                 watcher.Filter = "*.json";
 
-                    //We allow the watcher to raise events for use.
+                //We allow the watcher to raise events for use.
                 watcher.EnableRaisingEvents = true;
 
-                    //This while loop keeps the watcher running until a file has been found.
+                //This while loop keeps the watcher running until a file has been found.
                 while (JsonFilePath == null) {
                 }
             }
 
 
 
-                //This is the calling of the methods that are used
-                // for the program.
+            //This is the calling of the methods that are used
+            // for the program.
             readJsonComplex();
             readTemplate();
             readJsonSimple(jsonFilePath: JsonFilePath);
@@ -309,7 +312,7 @@ namespace AutoDocsDraft {
             //wordApp.Quit();
         }
 
-        
+
 
 
 
@@ -320,7 +323,7 @@ namespace AutoDocsDraft {
          */
         void OverflowMethodologies() {
 
-            
+
             Dictionary<string, string>? inputData = [];
 
 
@@ -477,5 +480,4 @@ namespace AutoDocsDraft {
             */
         }
     }
-    
 }
